@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>IronLog</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#121212">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IronLog">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="update-banner">
+  New version available.
+  <button id="update-reload-btn">Refresh</button>
+</div>
+
+<section id="screen-pin-setup" class="overlay-screen">
+  <h1>Set up your PIN</h1>
+  <p class="placeholder">Choose a 4–6 digit PIN to keep this app private.</p>
+  <input id="pin-setup-1" class="pin-input" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="Enter PIN">
+  <input id="pin-setup-2" class="pin-input" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="Confirm PIN">
+  <p id="pin-setup-error" class="error-text"></p>
+  <button id="pin-setup-submit" class="btn-primary">Set PIN</button>
+</section>
+
+<section id="screen-lock" class="overlay-screen">
+  <h1>Enter PIN</h1>
+  <input id="pin-lock-input" class="pin-input" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="PIN">
+  <p id="pin-lock-error" class="error-text"></p>
+  <button id="pin-lock-submit" class="btn-primary">Unlock</button>
+</section>
+
+<section id="exercise-form-overlay" class="overlay-screen">
+  <h1 id="exercise-form-title">Add Exercise</h1>
+  <input id="exercise-form-name" type="text" placeholder="Exercise name">
+  <select id="exercise-form-type">
+    <option value="strength">Strength</option>
+    <option value="cardio">Cardio</option>
+    <option value="bodyweight">Bodyweight</option>
+  </select>
+  <select id="exercise-form-musclegroup">
+    <option>Chest</option>
+    <option>Back</option>
+    <option>Legs</option>
+    <option>Shoulders</option>
+    <option>Arms</option>
+    <option>Core</option>
+    <option>Cardio</option>
+    <option>Other</option>
+  </select>
+  <p id="exercise-form-error" class="error-text"></p>
+  <div class="form-actions">
+    <button id="exercise-form-cancel">Cancel</button>
+    <button id="exercise-form-save" class="btn-primary">Save</button>
+  </div>
+</section>
+
+<section id="day-picker-overlay" class="overlay-screen wide-overlay">
+  <h1 id="day-picker-title">Assign Day</h1>
+  <div id="day-picker-options" class="picker-options"></div>
+  <button id="day-picker-cancel">Cancel</button>
+</section>
+
+<section id="routine-editor-overlay" class="overlay-screen wide-overlay">
+  <h1 id="routine-editor-title">New Routine</h1>
+  <input id="routine-name-input" type="text" placeholder="Routine name">
+
+  <div class="routine-add-exercise">
+    <select id="routine-exercise-select"></select>
+    <button id="routine-add-exercise-btn">+ Add</button>
+  </div>
+
+  <div id="routine-exercise-list"></div>
+
+  <p id="routine-editor-error" class="error-text"></p>
+  <div class="form-actions">
+    <button id="routine-editor-cancel">Cancel</button>
+    <button id="routine-editor-save" class="btn-primary">Save Routine</button>
+  </div>
+</section>
+
+<section id="day-summary-overlay" class="overlay-screen wide-overlay">
+  <h1>Workout Summary</h1>
+  <div id="day-summary-content"></div>
+  <div class="form-actions">
+    <button id="day-summary-close">Close</button>
+  </div>
+</section>
+
+<section id="resume-prompt-overlay" class="overlay-screen">
+  <h1>Resume Workout?</h1>
+  <p id="resume-prompt-text" class="placeholder"></p>
+  <div class="form-actions">
+    <button id="resume-prompt-dismiss">Not now</button>
+    <button id="resume-prompt-confirm" class="btn-primary">Resume</button>
+  </div>
+</section>
+
+<section id="choose-workout-overlay" class="overlay-screen wide-overlay">
+  <h1>Choose a Workout</h1>
+  <div id="choose-workout-options" class="picker-options"></div>
+  <button id="choose-workout-cancel">Cancel</button>
+</section>
+
+<section id="screen-workout" class="overlay-screen wide-overlay">
+  <h1 id="workout-screen-title">Workout</h1>
+  <p id="workout-progress" class="placeholder"></p>
+  <div id="workout-exercise-nav" class="workout-exercise-nav"></div>
+
+  <div class="routine-add-exercise">
+    <select id="workout-exercise-select"></select>
+    <button id="workout-add-exercise-btn">+ Add Exercise</button>
+  </div>
+
+  <div id="workout-current-exercise">
+    <h2 id="workout-exercise-name"></h2>
+    <p id="workout-exercise-meta" class="placeholder"></p>
+    <p id="workout-last-time" class="placeholder"></p>
+
+    <div id="workout-sets-list"></div>
+
+    <div id="workout-set-input" class="routine-add-exercise"></div>
+    <button id="workout-add-set-btn" class="btn-primary">+ Add Set</button>
+
+    <label class="workout-done-row">
+      <input type="checkbox" id="workout-done-checkbox"> Mark exercise done
+    </label>
+
+    <button id="workout-notes-toggle">+ Add note</button>
+    <textarea id="workout-exercise-notes" style="display:none;" placeholder="Notes for this exercise"></textarea>
+  </div>
+
+  <div id="rest-timer" class="rest-timer" style="display:none;">
+    <span id="rest-timer-display"></span>
+    <button id="rest-timer-add15">+15s</button>
+    <button id="rest-timer-skip">Skip</button>
+  </div>
+
+  <div class="form-actions workout-bottom-actions">
+    <button id="workout-back-btn">Back</button>
+    <button id="workout-finish-btn" class="btn-primary">Finish Workout</button>
+  </div>
+</section>
+
+<section id="finish-workout-overlay" class="overlay-screen">
+  <h1>Finish Workout</h1>
+  <textarea id="finish-workout-notes" placeholder="Notes about this workout (optional)"></textarea>
+  <div class="form-actions">
+    <button id="finish-workout-cancel">Cancel</button>
+    <button id="finish-workout-confirm" class="btn-primary">Finish</button>
+  </div>
+</section>
+
+<div id="app-main" class="hidden">
+  <main id="screens">
+    <section id="screen-today" class="screen active">
+      <h1>Today</h1>
+      <p id="today-day-label" class="placeholder"></p>
+      <p id="today-routine-label"></p>
+      <p id="today-completed-banner" style="display:none;"></p>
+      <button id="start-workout-btn" class="btn-primary">Start Workout</button>
+      <br><br>
+      <button id="choose-workout-btn">Choose a different workout</button>
+    </section>
+
+    <section id="screen-schedule" class="screen">
+      <h1>Schedule</h1>
+      <div id="weekday-grid"></div>
+
+      <div class="settings-section">
+        <h2>Your Routines</h2>
+        <div id="routine-list"></div>
+        <button id="new-routine-btn" class="btn-primary">+ New Routine</button>
+      </div>
+    </section>
+
+    <section id="screen-reports" class="screen">
+      <h1>Reports</h1>
+
+      <div class="settings-section">
+        <div class="calendar-nav">
+          <button id="calendar-prev-month">&lt; Prev</button>
+          <h2 id="calendar-month-label"></h2>
+          <button id="calendar-next-month">Next &gt;</button>
+        </div>
+        <p id="calendar-streak" class="placeholder"></p>
+        <div id="calendar-grid" class="calendar-grid"></div>
+      </div>
+
+      <div class="settings-section">
+        <h2>Strength Progress</h2>
+        <select id="strength-chart-exercise-select"></select>
+        <p id="strength-chart-empty" class="placeholder"></p>
+        <canvas id="strength-chart-canvas" height="220"></canvas>
+      </div>
+
+      <div class="settings-section">
+        <h2>Body Weight</h2>
+        <div class="routine-add-exercise">
+          <input id="bodyweight-date-input" type="date">
+          <input id="bodyweight-value-input" type="number" step="0.1" placeholder="Weight (kg)">
+          <button id="bodyweight-add-btn">+ Add</button>
+        </div>
+        <select id="bodyweight-range-select">
+          <option value="1">Last 1 month</option>
+          <option value="3">Last 3 months</option>
+          <option value="6" selected>Last 6 months</option>
+          <option value="12">Last 12 months</option>
+          <option value="all">All time</option>
+        </select>
+        <p id="bodyweight-chart-empty" class="placeholder"></p>
+        <canvas id="bodyweight-chart-canvas" height="220"></canvas>
+        <div id="bodyweight-entries-list"></div>
+      </div>
+    </section>
+
+    <section id="screen-settings" class="screen">
+      <h1>Settings</h1>
+
+      <div class="settings-section">
+        <h2>Units</h2>
+        <select id="units-select">
+          <option value="kg">Kilograms (kg)</option>
+          <option value="lbs">Pounds (lbs)</option>
+        </select>
+      </div>
+
+      <div class="settings-section">
+        <h2>Exercise Library</h2>
+        <div id="exercise-library-list"></div>
+        <button id="add-exercise-btn" class="btn-primary">+ Add Exercise</button>
+      </div>
+
+      <div class="settings-section">
+        <h2>Backup &amp; Restore</h2>
+        <button id="export-data-btn" class="btn-primary">Export Data</button>
+        <br><br>
+        <input id="import-data-file" type="file" accept="application/json" style="display:none;">
+        <button id="import-data-btn">Import Data</button>
+      </div>
+
+      <div class="settings-section">
+        <h2>About</h2>
+        <p class="placeholder">IronLog v1.0.0 — all your data is stored only on this device, never uploaded anywhere. There is no server-side PIN recovery: if you forget your PIN, clearing this site's browser storage will reset the app and erase your data. Back up regularly using Export in Settings.</p>
+      </div>
+    </section>
+  </main>
+
+  <nav id="bottom-nav">
+    <button class="nav-btn active" data-screen="today">Today</button>
+    <button class="nav-btn" data-screen="schedule">Schedule</button>
+    <button class="nav-btn" data-screen="reports">Reports</button>
+    <button class="nav-btn" data-screen="settings">Settings</button>
+  </nav>
+</div>
+
+<script src="vendor/idb.js"></script>
+<script src="js/db.js"></script>
+<script src="js/seedData.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/routines.js"></script>
+<script src="js/schedule.js"></script>
+<script src="js/settings.js"></script>
+<script src="vendor/chart.umd.js"></script>
+<script src="js/workout.js"></script>
+<script src="js/reports.js"></script>
+<script src="js/app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").then((reg) => {
+        reg.addEventListener("updatefound", () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+              document.getElementById("update-banner").classList.add("visible");
+            }
+          });
+        });
+      });
+    });
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      document.getElementById("update-banner").classList.remove("visible");
+    });
+  }
+
+  document.getElementById("update-reload-btn").addEventListener("click", () => {
+    window.location.reload();
+  });
+</script>
+</body>
+</html>
